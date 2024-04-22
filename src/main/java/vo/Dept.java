@@ -7,10 +7,33 @@ package vo;
 // 뭘 써도 되는지 기준은 없지만 본인이 좀 더 좋은 결과를 선택
 
 public class Dept {
-	// 
-	public int deptNo;
-	public String dname;
-	public String loc;
+	// public-> private으로 변경
+	private int deptNo;
+	private String dname;
+	private String loc;
+	
+	
+	// Setter, Getter
+	public int getDeptNo() {
+		return deptNo;
+	}
+	public void setDeptNo(int deptNo) {
+		this.deptNo = deptNo;
+	}
+	public String getDname() {
+		return dname;
+	}
+	public void setDname(String dname) {
+		this.dname = dname;
+	}
+	public String getLoc() {
+		return loc;
+	}
+	public void setLoc(String loc) {
+		this.loc = loc;
+	}
+	
+	
 	
 
 }
