@@ -104,4 +104,67 @@ public class EmpDAO {
 		}
 		return list;
 	}
+	
+	// q004WhereIn.jsp에서 호출
+	// 
+	public static ArrayList<Emp> selectEmpListByGrade(ArrayList<Integer> ckList) throws Exception{
+		ArrayList<Emp> list = new ArrayList<>();
+		
+		Connection conn = DBHelper.getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		String sql = "SELECT ename, grade"
+				+ " FROM emp"
+				+ " WHERE grade IN";
+		
+		// 경우의 수가 5가지
+		if(ckList.size() == 1) {
+			sql = sql + " (?)";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, ckList.get(0));
+			
+		}else if(ckList.size() == 2) {
+			sql = sql + " (?, ?)";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, ckList.get(0));
+			stmt.setInt(2, ckList.get(1));
+			
+		}else if(ckList.size() == 3) {
+			sql = sql + " (?, ?, ?)";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, ckList.get(0));
+			stmt.setInt(2, ckList.get(1));
+			stmt.setInt(3, ckList.get(2));
+			
+		}else if(ckList.size() == 4) {
+			sql = sql + " (?, ?, ?, ?)";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, ckList.get(0));
+			stmt.setInt(2, ckList.get(1));
+			stmt.setInt(3, ckList.get(2));
+			stmt.setInt(4, ckList.get(3));
+			
+		}else if(ckList.size() == 5){
+			sql = sql + " (?, ?, ?, ?, ?)";
+			stmt = conn.prepareStatement(sql);
+			stmt.setInt(1, ckList.get(0));
+			stmt.setInt(2, ckList.get(1));
+			stmt.setInt(3, ckList.get(2));
+			stmt.setInt(4, ckList.get(3));
+			stmt.setInt(5, ckList.get(4));
+		}
+		
+		rs = stmt.executeQuery();
+		
+		while(rs.next()) {
+			Emp e = new Emp(); //emp에 넣어주기
+			e.setEname(rs.getString("ename"));
+			e.setGrade(rs.getInt("grade"));
+			list.add(e);
+		}
+		
+		conn.close();
+		return list;
+	}
 }
