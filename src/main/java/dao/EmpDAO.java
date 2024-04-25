@@ -9,6 +9,89 @@ import java.util.HashMap;
 import vo.Emp;
 
 public class EmpDAO {
+	// q006groupBy.jsp
+	public static ArrayList<HashMap<String, Integer>> selectEmpSalStats() throws Exception{
+		ArrayList<HashMap<String, Integer>> list = new ArrayList<>();
+		
+		Connection conn = DBHelper.getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		// sql문 grade등급, count갯수, sum합계, avg평균, max최대값, min최소값을 grade순으로 정렬
+		String sql = "SELECT "
+					+ "	grade,"
+					+ "	COUNT(*) count,"
+					+ "	SUM(sal) sum,"
+					+ "	AVG(sal) avg,"
+					+ "	MAX(sal) max,"
+					+ "	MIN(sal) min"
+				+ " FROM emp"
+				+ " GROUP BY grade"
+				+ " ORDER BY grade ASC";
+		
+		stmt = conn.prepareStatement(sql);
+		rs = stmt.executeQuery();
+		
+		while(rs.next()) {
+			HashMap<String, Integer> m = new HashMap<String, Integer>();
+			m.put("grade", rs.getInt("grade"));
+			m.put("count", rs.getInt("count"));
+			m.put("sum", rs.getInt("sum"));
+			m.put("avg", rs.getInt("avg"));
+			m.put("max", rs.getInt("max"));
+			m.put("min", rs.getInt("min"));
+			list.add(m);
+		}
+		
+		conn.close();
+		return list;
+	}
+	
+	
+	// q005orderBy.jsp
+	public static ArrayList<Emp> selectEmpListSort(String col, String sort) throws Exception{
+		ArrayList<Emp> list = new ArrayList<>();
+		
+		Connection conn = DBHelper.getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		//매개값 디버깅
+		System.out.println(col + " <-- col EmpDAO selectEmpListSort");
+		System.out.println(sort + " <-- sort EmpDAO selectEmpListSort");
+		
+		/*
+		 * 동적쿼리 :: 쿼리문자열이 매개값에 따라 분리되어서 차리가 남
+		 * 없음
+		 * empno ASC
+		 * empno DESC
+		 * ename ASC
+		 * ename DESC
+		 * 
+		 */
+		
+		String sql = "SELECT empno, ename"
+				+ " FROM emp";
+		
+		if(col != null && sort != null) {
+			sql = sql+" ORDER BY "+col+" "+sort;
+		}
+		
+		stmt = conn.prepareStatement(sql);
+		
+		rs = stmt.executeQuery();
+		
+		while(rs.next()) {
+			Emp e = new Emp();
+			e.setEmpNo(rs.getInt("empno"));
+			e.setEname(rs.getString("ename"));
+			list.add(e);
+		}
+		
+		conn.close();
+		return list;
+	}
+	
 	// DEPTNO 뒤에 부서별 인원 같이 조회하는 메서드
 	public static ArrayList<HashMap<String, Integer>> selectDeptNoCnt() throws Exception{
 		ArrayList<HashMap<String, Integer>> list = new ArrayList<>();
