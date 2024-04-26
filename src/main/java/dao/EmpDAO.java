@@ -9,6 +9,44 @@ import java.util.HashMap;
 import vo.Emp;
 
 public class EmpDAO {
+	// q007SelfJoin.jsp
+	public static ArrayList<HashMap<String, Object>> selectEmpMgr() throws Exception{
+		ArrayList<HashMap<String, Object>> list = new ArrayList<>();
+		
+		Connection conn = DBHelper.getConnection();
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		//empno, ename, grade, mgrName(null일 경우 관리자없음 출력)
+		//mgrName(null일 경우 관리자없음 출력), mgrGrade(null일경우 0을 출력)
+		// self join으로 e1.mgr과 e2.empno을 연결 후 empno순서로 조회하기
+		String sql = "SELECT "
+					+ " e1.empno empno,"
+					+ " e1.ename ename,"
+					+ " e1.grade grade,"
+					+ " nvl(e2.ename, '관리자없음') \"mgrName\","
+					+ " nvl(e2.grade, 0) \"mgrGrade\""
+				+ " FROM emp e1 LEFT OUTER JOIN emp e2"
+				+ " ON e1.mgr = e2.empno"
+				+ " ORDER BY e1.empno ASC";
+		
+		stmt = conn.prepareStatement(sql);
+		rs = stmt.executeQuery();
+		
+		while(rs.next()) {
+			HashMap<String, Object> e = new HashMap<String, Object>();
+			e.put("empno", rs.getInt("empno"));
+			e.put("ename", rs.getString("ename"));
+			e.put("grade", rs.getInt("grade"));
+			e.put("mgrName", rs.getString("mgrName"));
+			e.put("mgrGrade", rs.getInt("mgrGrade"));
+			list.add(e);
+		}
+		
+		conn.close();
+		return list;
+	}
+	
 	// q006groupBy.jsp
 	public static ArrayList<HashMap<String, Integer>> selectEmpSalStats() throws Exception{
 		ArrayList<HashMap<String, Integer>> list = new ArrayList<>();
